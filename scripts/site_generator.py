@@ -1,0 +1,165 @@
+"""Generates the self-contained index.html dashboard from a todos list."""
+import json
+from datetime import datetime
+
+def generate_site(todos: list[dict], output_path: str = "index.html"):
+    generated_at = datetime.now().strftime("%B %d, %Y · %I:%M %p IST")
+    critical = sum(1 for t in todos if t.get("priority") == "critical")
+    high     = sum(1 for t in todos if t.get("priority") == "high")
+    todos_json = json.dumps(todos, ensure_ascii=False)
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OD PM To-Do · {datetime.now().strftime("%b %d, %Y")}</title>
+<style>
+  :root {{
+    --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;
+    --text:#e2e8f0;--muted:#8892b0;--accent:#7c6aff;--accent2:#56b8ff;
+    --critical:#ff5b5b;--high:#ff9f43;--medium:#feca57;--low:#48dbfb;
+    --radius:12px;
+  }}
+  *{{box-sizing:border-box;margin:0;padding:0}}
+  body{{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh}}
+  .header{{background:linear-gradient(135deg,#1a1d27,#161a2e);border-bottom:1px solid var(--border);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}}
+  .header-left h1{{font-size:20px;font-weight:800;background:linear-gradient(135deg,#7c6aff,#56b8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}}
+  .header-left .sub{{font-size:12px;color:var(--muted);margin-top:2px}}
+  .header-stats{{display:flex;gap:12px;align-items:center}}
+  .stat-chip{{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}}
+  .stat-dot{{width:8px;height:8px;border-radius:50%}}
+  .toolbar{{padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:67px;z-index:9}}
+  .filter-btn{{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}}
+  .filter-btn:hover{{border-color:var(--accent);color:var(--text)}}
+  .filter-btn.active{{background:var(--accent);border-color:var(--accent);color:#fff}}
+  .search-input{{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:16px;font-size:11px;width:200px;outline:none;margin-left:auto}}
+  .search-input:focus{{border-color:var(--accent)}}
+  .search-input::placeholder{{color:var(--muted)}}
+  .main{{max-width:860px;margin:0 auto;padding:20px 24px 60px}}
+  .section-header{{display:flex;align-items:center;gap:10px;margin:28px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted)}}
+  .section-header::before{{content:'';width:12px;height:12px;border-radius:50%;flex-shrink:0}}
+  .s-critical::before{{background:var(--critical);box-shadow:0 0 8px var(--critical)}}
+  .s-high::before{{background:var(--high)}}
+  .s-medium::before{{background:var(--medium)}}
+  .s-low::before{{background:var(--low)}}
+  .section-header::after{{content:'';flex:1;height:1px;background:var(--border)}}
+  .card{{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s}}
+  .card:hover{{border-color:var(--accent);box-shadow:0 4px 20px rgba(124,106,255,.08)}}
+  .card.open{{border-color:var(--accent)}}
+  .card-top{{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}}
+  .card-main{{flex:1;min-width:0}}
+  .badges{{display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap}}
+  .badge{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px}}
+  .b-jira{{background:#2684ff1a;color:#5b9fff;border:1px solid #2684ff33}}
+  .b-teams{{background:#7b83eb1a;color:#9ba4f0;border:1px solid #7b83eb33}}
+  .b-email{{background:#0078d41a;color:#4da6e8;border:1px solid #0078d433}}
+  .b-confluence{{background:#0052cc1a;color:#4d8ef0;border:1px solid #0052cc33}}
+  .b-critical{{background:#ff5b5b1a;color:#ff8080;border:1px solid #ff5b5b33}}
+  .b-high{{background:#ff9f431a;color:#ffb870;border:1px solid #ff9f4333}}
+  .b-medium{{background:#feca571a;color:#fed97a;border:1px solid #feca5733}}
+  .b-low{{background:#48dbfb1a;color:#6de5ff;border:1px solid #48dbfb33}}
+  .b-effort{{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}}
+  .card-title{{font-size:13px;font-weight:700;color:var(--text);line-height:1.4}}
+  .card-preview{{font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
+  .card.open .card-preview{{display:none}}
+  .card-meta{{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}}
+  .card-time{{font-size:11px;color:var(--muted)}}
+  .chevron{{font-size:12px;color:var(--muted);transition:transform .2s;user-select:none}}
+  .card.open .chevron{{transform:rotate(180deg)}}
+  .drill{{display:none;padding:0 16px 14px}}
+  .card.open .drill{{display:block}}
+  .drill-grid{{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;border-top:1px solid var(--border);padding-top:12px}}
+  .drill-box{{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px}}
+  .drill-lbl{{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}}
+  .lbl-ctx{{color:#56b8ff}}.lbl-prob{{color:#ff9f43}}.lbl-sol{{color:#48dbfb}}.lbl-act{{color:#ff6b9d}}
+  .drill-text{{font-size:12px;color:#c8d0e7;line-height:1.55}}
+  .steps{{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:2px}}
+  .steps li{{display:flex;gap:7px;font-size:12px;color:#c8d0e7;line-height:1.5;align-items:flex-start}}
+  .snum{{background:linear-gradient(135deg,#7c6aff,#56b8ff);color:#fff;min-width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}}
+  .drill-footer{{display:flex;align-items:center;justify-content:space-between;margin-top:10px}}
+  .tags{{display:flex;gap:5px;flex-wrap:wrap}}
+  .tag{{font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:4px}}
+  .open-btn{{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;transition:background .15s;flex-shrink:0}}
+  .open-btn:hover{{background:#7c6aff1a}}
+  .empty{{text-align:center;padding:60px;color:var(--muted);font-size:14px}}
+  @media(max-width:600px){{.drill-grid{{grid-template-columns:1fr}}.header{{flex-direction:column;gap:10px;align-items:flex-start}}}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <h1>⚡ OD PM Daily To-Do</h1>
+    <div class="sub">Avinash Tippani · {generated_at}</div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--critical)"></span><span>{critical} critical</span></div>
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--high)"></span><span>{high} high</span></div>
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--accent)"></span><span>{len(todos)} total</span></div>
+  </div>
+</div>
+<div class="toolbar" id="toolbar">
+  <button class="filter-btn active" data-f="all">All</button>
+  <button class="filter-btn" data-f="critical">🔴 Critical</button>
+  <button class="filter-btn" data-f="jira">Jira</button>
+  <button class="filter-btn" data-f="teams">Teams</button>
+  <button class="filter-btn" data-f="email">Email</button>
+  <button class="filter-btn" data-f="confluence">Confluence</button>
+  <input class="search-input" id="search" placeholder="Search…" type="text"/>
+</div>
+<div class="main" id="main"></div>
+<script>
+const TODOS={todos_json};
+let activeFilter="all",searchQuery="";
+function render(){{
+  const main=document.getElementById("main");
+  let todos=TODOS.slice();
+  if(activeFilter==="critical")todos=todos.filter(t=>t.priority==="critical");
+  else if(activeFilter!=="all")todos=todos.filter(t=>t.source===activeFilter);
+  if(searchQuery){{const q=searchQuery.toLowerCase();todos=todos.filter(t=>t.title.toLowerCase().includes(q)||t.context.toLowerCase().includes(q)||(t.tags||[]).some(x=>x.toLowerCase().includes(q)));}}
+  if(!todos.length){{main.innerHTML='<div class="empty">✅ No items match your filters</div>';return;}}
+  const groups={{critical:[],high:[],medium:[],low:[]}};
+  todos.forEach(t=>(groups[t.priority]||groups.low).push(t));
+  const labels={{critical:"Critical — Needs action today",high:"High Priority — This week",medium:"Medium — This sprint",low:"Low / FYI"}};
+  let html="";
+  ["critical","high","medium","low"].forEach(p=>{{
+    if(!groups[p].length)return;
+    html+=`<div class="section-header s-${{p}}">${{labels[p]}}&nbsp;(${{groups[p].length}})</div>`;
+    groups[p].forEach(t=>{{html+=buildCard(t);}});
+  }});
+  main.innerHTML=html;
+}}
+function buildCard(t){{
+  const sl={{jira:"Jira",teams:"Teams",email:"Email",confluence:"Conf"}};
+  const srcLabel=sl[t.source]||t.source;
+  const link=t.source_url?`<a class="open-btn" href="${{t.source_url}}" target="_blank">↗ Open in ${{srcLabel}}</a>`:"";
+  const steps=(t.action_plan||"").split("\\n").filter(Boolean).map(s=>s.replace(/^\\d+\\.\\s*/,"").trim()).slice(0,4);
+  const stepsHtml=steps.map((s,i)=>`<li><span class="snum">${{i+1}}</span><span>${{s}}</span></li>`).join("");
+  const tagsHtml=(t.tags||[]).map(tg=>`<span class="tag">${{tg}}</span>`).join("");
+  const timeStr=t.updated?relTime(t.updated):"";
+  return `<div class="card" data-id="${{t.id}}" onclick="toggle(${{t.id}},event)">
+    <div class="card-top"><div class="card-main">
+      <div class="badges"><span class="badge b-${{t.source}}">${{srcLabel}}</span><span class="badge b-${{t.priority}}">${{t.priority}}</span><span class="badge b-effort">${{t.estimated_effort||""}}</span></div>
+      <div class="card-title">${{t.title}}</div>
+      <div class="card-preview">${{t.context||""}}</div>
+    </div>
+    <div class="card-meta"><span class="card-time">${{timeStr}}</span><span class="chevron">▾</span></div></div>
+    <div class="drill"><div class="drill-grid">
+      <div class="drill-box"><div class="drill-lbl lbl-ctx">📋 Context</div><div class="drill-text">${{t.context||"—"}}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-prob">⚠️ Problem</div><div class="drill-text">${{t.problem||"—"}}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-sol">💡 Solution</div><div class="drill-text">${{t.solution||"—"}}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-act">🎯 Action Plan</div><ul class="steps">${{stepsHtml}}</ul></div>
+    </div><div class="drill-footer"><div class="tags">${{tagsHtml}}</div>${{link}}</div></div>
+  </div>`;
+}}
+function toggle(id,e){{if(e.target.tagName==="A")return;const c=document.querySelector(`.card[data-id="${{id}}"]`);if(!c)return;const w=c.classList.contains("open");document.querySelectorAll(".card.open").forEach(x=>x.classList.remove("open"));if(!w)c.classList.add("open");}}
+function relTime(s){{const d=new Date(s);if(isNaN(d))return"";const diff=(Date.now()-d)/1000;if(diff<60)return"just now";if(diff<3600)return`${{Math.floor(diff/60)}}m ago`;if(diff<86400)return`${{Math.floor(diff/3600)}}h ago`;return`${{Math.floor(diff/86400)}}d ago`;}}
+document.getElementById("toolbar").addEventListener("click",e=>{{const btn=e.target.closest(".filter-btn");if(!btn)return;document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");activeFilter=btn.dataset.f;render();}});
+document.getElementById("search").addEventListener("input",e=>{{searchQuery=e.target.value;render();}});
+render();
+</script>
+</body>
+</html>"""
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"[site] Generated {output_path} with {len(todos)} todos")
