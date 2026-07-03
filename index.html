@@ -3,190 +3,91 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OD PM To-Do · July 2, 2026</title>
+<title>OD PM To-Do · Jul 03, 2026</title>
 <style>
   :root {
-    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3350;
-    --text: #e2e8f0; --muted: #8892b0; --accent: #7c6aff; --accent2: #56b8ff;
-    --critical: #ff5b5b; --high: #ff9f43; --medium: #feca57; --low: #48dbfb;
-    --radius: 12px;
+    --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;
+    --text:#e2e8f0;--muted:#8892b0;--accent:#7c6aff;--accent2:#56b8ff;
+    --critical:#ff5b5b;--high:#ff9f43;--medium:#feca57;--low:#48dbfb;
+    --radius:12px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 14px; min-height: 100vh; }
-
-  /* ── HEADER ── */
-  .header {
-    background: linear-gradient(135deg, #1a1d27 0%, #161a2e 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 28px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10;
-  }
-  .header-left h1 {
-    font-size: 20px; font-weight: 800;
-    background: linear-gradient(135deg, #7c6aff, #56b8ff);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .header-left .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .header-stats { display: flex; gap: 16px; align-items: center; }
-  .stat-chip {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--surface); border: 1px solid var(--border);
-    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-  }
-  .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .sd-crit { background: var(--critical); }
-  .sd-high { background: var(--high); }
-  .sd-total { background: var(--accent); }
-
-  /* ── TOOLBAR ── */
-  .toolbar {
-    padding: 12px 28px; display: flex; gap: 8px; flex-wrap: wrap;
-    background: var(--bg); border-bottom: 1px solid var(--border);
-    position: sticky; top: 67px; z-index: 9;
-  }
-  .filter-btn {
-    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-    padding: 5px 14px; border-radius: 16px; font-size: 11px; font-weight: 600;
-    cursor: pointer; transition: all .15s; letter-spacing: .3px;
-  }
-  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
-  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-  /* search */
-  .search-input {
-    background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    padding: 5px 12px; border-radius: 16px; font-size: 11px; width: 200px;
-    outline: none; margin-left: auto;
-  }
-  .search-input:focus { border-color: var(--accent); }
-  .search-input::placeholder { color: var(--muted); }
-
-  /* ── MAIN ── */
-  .main { max-width: 860px; margin: 0 auto; padding: 20px 24px 60px; }
-
-  /* Section headers */
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    margin: 28px 0 10px;
-    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px;
-    color: var(--muted);
-  }
-  .section-header::before {
-    content: ''; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-  }
-  .section-header.s-critical::before { background: var(--critical); box-shadow: 0 0 8px var(--critical); }
-  .section-header.s-high::before    { background: var(--high); }
-  .section-header.s-medium::before  { background: var(--medium); }
-  .section-header.s-low::before     { background: var(--low); }
-  .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* ── CARD ── */
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); margin-bottom: 8px; cursor: pointer;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(124,106,255,.08); }
-  .card.open { border-color: var(--accent); box-shadow: 0 4px 20px rgba(124,106,255,.1); }
-
-  .card-top { padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
-  .card-main { flex: 1; min-width: 0; }
-  .badges { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; align-items: center; }
-
-  .badge {
-    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
-    padding: 2px 7px; border-radius: 4px;
-  }
-  .b-jira       { background: #2684ff1a; color: #5b9fff; border: 1px solid #2684ff33; }
-  .b-teams      { background: #7b83eb1a; color: #9ba4f0; border: 1px solid #7b83eb33; }
-  .b-email      { background: #0078d41a; color: #4da6e8; border: 1px solid #0078d433; }
-  .b-confluence { background: #0052cc1a; color: #4d8ef0; border: 1px solid #0052cc33; }
-  .b-critical { background: #ff5b5b1a; color: #ff8080; border: 1px solid #ff5b5b33; }
-  .b-high     { background: #ff9f431a; color: #ffb870; border: 1px solid #ff9f4333; }
-  .b-medium   { background: #feca571a; color: #fed97a; border: 1px solid #feca5733; }
-  .b-low      { background: #48dbfb1a; color: #6de5ff; border: 1px solid #48dbfb33; }
-  .b-effort   { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-
-  .card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
-  .card-preview { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card.open .card-preview { display: none; }
-
-  .card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
-  .card-time { font-size: 11px; color: var(--muted); }
-  .chevron { font-size: 12px; color: var(--muted); transition: transform .2s; user-select: none; }
-  .card.open .chevron { transform: rotate(180deg); }
-
-  /* ── DRILL-DOWN ── */
-  .drill { display: none; padding: 0 16px 14px; }
-  .card.open .drill { display: block; }
-
-  .drill-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;
-    border-top: 1px solid var(--border); padding-top: 12px;
-  }
-  .drill-box {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 9px; padding: 10px 12px;
-  }
-  .drill-lbl {
-    font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px;
-    margin-bottom: 5px; display: flex; align-items: center; gap: 4px;
-  }
-  .lbl-ctx  { color: #56b8ff; }
-  .lbl-prob { color: #ff9f43; }
-  .lbl-sol  { color: #48dbfb; }
-  .lbl-act  { color: #ff6b9d; }
-  .drill-text { font-size: 12px; color: #c8d0e7; line-height: 1.55; }
-
-  .steps { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
-  .steps li { display: flex; gap: 7px; font-size: 12px; color: #c8d0e7; line-height: 1.5; align-items: flex-start; }
-  .snum {
-    background: linear-gradient(135deg, #7c6aff, #56b8ff);
-    color: #fff; min-width: 18px; height: 18px; border-radius: 50%;
-    font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
-
-  .drill-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-  .tags { display: flex; gap: 5px; flex-wrap: wrap; }
-  .tag {
-    font-size: 10px; color: var(--muted); background: var(--surface2);
-    border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px;
-  }
-  .open-btn {
-    display: inline-flex; align-items: center; gap: 4px;
-    color: var(--accent); font-size: 11px; font-weight: 700; text-decoration: none;
-    padding: 4px 10px; border: 1px solid var(--accent); border-radius: 6px;
-    transition: background .15s; flex-shrink: 0;
-  }
-  .open-btn:hover { background: #7c6aff1a; }
-
-  /* empty state */
-  .empty { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
-    .drill-grid { grid-template-columns: 1fr; }
-    .header { flex-direction: column; gap: 10px; align-items: flex-start; }
-    .header-stats { flex-wrap: wrap; }
-  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh}
+  .header{background:linear-gradient(135deg,#1a1d27,#161a2e);border-bottom:1px solid var(--border);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .header-left h1{font-size:20px;font-weight:800;background:linear-gradient(135deg,#7c6aff,#56b8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .header-left .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .header-stats{display:flex;gap:12px;align-items:center}
+  .stat-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}
+  .stat-dot{width:8px;height:8px;border-radius:50%}
+  .toolbar{padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:67px;z-index:9}
+  .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+  .filter-btn:hover{border-color:var(--accent);color:var(--text)}
+  .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .search-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:16px;font-size:11px;width:200px;outline:none;margin-left:auto}
+  .search-input:focus{border-color:var(--accent)}
+  .search-input::placeholder{color:var(--muted)}
+  .main{max-width:860px;margin:0 auto;padding:20px 24px 60px}
+  .section-header{display:flex;align-items:center;gap:10px;margin:28px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted)}
+  .section-header::before{content:'';width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .s-critical::before{background:var(--critical);box-shadow:0 0 8px var(--critical)}
+  .s-high::before{background:var(--high)}
+  .s-medium::before{background:var(--medium)}
+  .s-low::before{background:var(--low)}
+  .section-header::after{content:'';flex:1;height:1px;background:var(--border)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+  .card:hover{border-color:var(--accent);box-shadow:0 4px 20px rgba(124,106,255,.08)}
+  .card.open{border-color:var(--accent)}
+  .card-top{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+  .card-main{flex:1;min-width:0}
+  .badges{display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap}
+  .badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px}
+  .b-jira{background:#2684ff1a;color:#5b9fff;border:1px solid #2684ff33}
+  .b-teams{background:#7b83eb1a;color:#9ba4f0;border:1px solid #7b83eb33}
+  .b-email{background:#0078d41a;color:#4da6e8;border:1px solid #0078d433}
+  .b-confluence{background:#0052cc1a;color:#4d8ef0;border:1px solid #0052cc33}
+  .b-critical{background:#ff5b5b1a;color:#ff8080;border:1px solid #ff5b5b33}
+  .b-high{background:#ff9f431a;color:#ffb870;border:1px solid #ff9f4333}
+  .b-medium{background:#feca571a;color:#fed97a;border:1px solid #feca5733}
+  .b-low{background:#48dbfb1a;color:#6de5ff;border:1px solid #48dbfb33}
+  .b-effort{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+  .card-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.4}
+  .card-preview{font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card.open .card-preview{display:none}
+  .card-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+  .card-time{font-size:11px;color:var(--muted)}
+  .chevron{font-size:12px;color:var(--muted);transition:transform .2s;user-select:none}
+  .card.open .chevron{transform:rotate(180deg)}
+  .drill{display:none;padding:0 16px 14px}
+  .card.open .drill{display:block}
+  .drill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;border-top:1px solid var(--border);padding-top:12px}
+  .drill-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+  .drill-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+  .lbl-ctx{color:#56b8ff}.lbl-prob{color:#ff9f43}.lbl-sol{color:#48dbfb}.lbl-act{color:#ff6b9d}
+  .drill-text{font-size:12px;color:#c8d0e7;line-height:1.55}
+  .steps{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:2px}
+  .steps li{display:flex;gap:7px;font-size:12px;color:#c8d0e7;line-height:1.5;align-items:flex-start}
+  .snum{background:linear-gradient(135deg,#7c6aff,#56b8ff);color:#fff;min-width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .drill-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+  .tags{display:flex;gap:5px;flex-wrap:wrap}
+  .tag{font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:4px}
+  .open-btn{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;transition:background .15s;flex-shrink:0}
+  .open-btn:hover{background:#7c6aff1a}
+  .empty{text-align:center;padding:60px;color:var(--muted);font-size:14px}
+  @media(max-width:600px){.drill-grid{grid-template-columns:1fr}.header{flex-direction:column;gap:10px;align-items:flex-start}}
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="header-left">
     <h1>⚡ OD PM Daily To-Do</h1>
-    <div class="sub" id="subLine">Avinash Tippani · July 2, 2026 · Last refreshed: 12:40 PM IST</div>
+    <div class="sub">Avinash Tippani · July 03, 2026 · 06:06 AM IST</div>
   </div>
   <div class="header-stats">
-    <div class="stat-chip"><span class="stat-dot sd-crit"></span><span id="cCritical">2 critical</span></div>
-    <div class="stat-chip"><span class="stat-dot sd-high"></span><span id="cHigh">5 high</span></div>
-    <div class="stat-chip"><span class="stat-dot sd-total"></span><span id="cTotal">15 total</span></div>
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--critical)"></span><span>0 critical</span></div>
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--high)"></span><span>0 high</span></div>
+    <div class="stat-chip"><span class="stat-dot" style="background:var(--accent)"></span><span>0 total</span></div>
   </div>
 </div>
-
 <div class="toolbar" id="toolbar">
   <button class="filter-btn active" data-f="all">All</button>
   <button class="filter-btn" data-f="critical">🔴 Critical</button>
@@ -196,365 +97,55 @@
   <button class="filter-btn" data-f="confluence">Confluence</button>
   <input class="search-input" id="search" placeholder="Search…" type="text"/>
 </div>
-
 <div class="main" id="main"></div>
-
 <script>
-const TODOS = [
-  {
-    id:1,
-    title:"Clarify XMatters on-call duty with Tsahi",
-    priority:"critical",
-    source:"teams",
-    category:"stakeholder",
-    estimated_effort:"15min",
-    updated:"2026-07-02T10:02:00+0530",
-    source_url:"",
-    context:"Tsahi responded to Avinash's question about XMatters with 'Do you really want to know?' — implying an active or imminent on-call assignment. On-call duty is time-sensitive and can't be left ambiguous as it affects incident response coverage.",
-    problem:"It's unclear whether Avinash is currently on the XMatters rotation. If active and unacknowledged, missed escalations could impact production incident SLAs.",
-    solution:"Reply to Tsahi directly asking for a straight answer on current XMatters rotation status and dates. Also check the XMatters portal directly.",
-    action_plan:"1. Reply to Tsahi: 'Yes please confirm — am I currently on the XMatters rotation and if so what are the dates?'\n2. Log in to XMatters portal to check schedule independently.\n3. If on-call, confirm you have incident runbook access and escalation contacts.\n4. Set up phone alerts/notifications if not already configured.",
-    tags:["xmatters","on-call","incident-response","tsahi","critical"]
-  },
-  {
-    id:2,
-    title:"Send Prakash action items from today's release meeting",
-    priority:"critical",
-    source:"teams",
-    category:"stakeholder",
-    estimated_effort:"30min",
-    updated:"2026-07-02T09:15:00+0530",
-    source_url:"",
-    context:"Prakash Padadune messaged that he missed today's OD release readiness meeting and explicitly asked for action items. The meeting covered Release Plan, Timeline, Dependencies and Risks including FedRAMP, GDPR, and DWP items.",
-    problem:"Prakash is a dependency owner who missed the meeting. Without action items, his workstream is blocked and the release plan gaps won't close on time.",
-    solution:"Compile key decisions and Prakash-specific action items from the meeting bot summary and send to him via Teams today.",
-    action_plan:"1. Review today's meeting bot summary for the release readiness session.\n2. Extract action items specifically relevant to Prakash's workstream.\n3. Send a concise Teams message: decisions made, his action items, deadlines.\n4. Request acknowledgment by EOD to confirm receipt.",
-    tags:["release-planning","prakash","action-items","meeting-followup","stakeholder"]
-  },
-  {
-    id:3,
-    title:"Review CSA-87472: AI Agent Evaluations Launch Readiness",
-    priority:"high",
-    source:"jira",
-    category:"product",
-    estimated_effort:"1h",
-    updated:"2026-07-02T05:53:06+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-87472",
-    context:"CSA-87472 is a P2 Epic for AI Agent Evaluations Launch Readiness assigned to Avishay Robinov. It was updated early this morning (5:53 AM IST) with what appears to be an attachment — likely a readiness checklist or blocker flagged by the engineering team.",
-    problem:"An early-morning update with an attachment on a launch readiness epic signals something was flagged that needs PM attention before it delays the launch timeline.",
-    solution:"Open the ticket, review the attachment and latest comments, assess for blockers, and update the launch readiness status with next steps.",
-    action_plan:"1. Open CSA-87472 and review the new attachment and comment thread.\n2. Identify any open blockers or gaps in launch readiness criteria.\n3. Assign owners to any unresolved items with concrete deadlines.\n4. Update ticket status and confirm with Avishay what's outstanding.",
-    tags:["ai-evaluations","launch-readiness","CSA-87472","avishay","P2"]
-  },
-  {
-    id:4,
-    title:"Triage CSA-70457: Agent Name blank in OD Export (P2 customer bug)",
-    priority:"high",
-    source:"jira",
-    category:"engineering",
-    estimated_effort:"30min",
-    updated:"2026-06-30T10:39:03+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-70457",
-    context:"CSA-70457 is a P2 customer-reported bug: Agent Name field is blank in Copilot Observability Dashboard exports. Labels include 'customer-reported' and 'observability-dashboard'. The ticket is still in 'New' status — unassigned and unprioritized for 2+ days.",
-    problem:"A customer-visible data quality bug in the export feature has been sitting open for 2+ days without an assignee. P2 customer-reported bugs require rapid triage and sprint assignment to maintain customer trust.",
-    solution:"Assign to the OD engineering owner, add to current sprint, set a target fix date, and send acknowledgment to the customer.",
-    action_plan:"1. Open CSA-70457 and identify the export field mapping responsible for Agent Name.\n2. Assign to OD engineering engineer (check with team lead for availability).\n3. Add to current sprint with P2 SLA target fix date.\n4. Reply to the reporting customer acknowledging receipt and expected fix timeframe.",
-    tags:["customer-bug","export","P2","CSA-70457","copilot-OD"]
-  },
-  {
-    id:5,
-    title:"Sprint-assign CSA-27680: OD AI Agent Phase 2 (Ready for Dev)",
-    priority:"high",
-    source:"jira",
-    category:"product",
-    estimated_effort:"15min",
-    updated:"2026-07-02T09:44:56+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-27680",
-    context:"CSA-27680 (OD - AI Agent - Phase 2) moved to 'Ready for Dev' and was updated this morning at 9:44 AM IST. It currently has no assignee. Ready for Dev tickets sitting unassigned create engineering idle time risk.",
-    problem:"The ticket is ready for engineering but has no sprint assignment or assignee — risks being missed in planning and delaying Phase 2 delivery.",
-    solution:"Confirm sprint capacity with engineering lead, assign to the right engineer, and add to the current or upcoming sprint today.",
-    action_plan:"1. Check current sprint capacity with OD engineering lead.\n2. Assign CSA-27680 to the appropriate engineer.\n3. Add to current or upcoming sprint in Jira.\n4. Confirm with engineer that acceptance criteria and scope are clear.",
-    tags:["ai-agent","ready-for-dev","sprint-planning","CSA-27680"]
-  },
-  {
-    id:6,
-    title:"Sprint-assign CSA-85711: Copilot Analytics UX Improvements",
-    priority:"high",
-    source:"jira",
-    category:"product",
-    estimated_effort:"15min",
-    updated:"2026-07-02T09:41:27+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-85711",
-    context:"CSA-85711 (Copilot Agent Analytics — Layout & UX Improvements) is 'Ready for Dev', assigned to Sherry Mashavi, updated this morning at 9:41 AM IST. Sherry is assigned but the ticket has no sprint — she may not know when to start.",
-    problem:"Sherry is assigned but without a sprint context she can't schedule this work, creating ambiguity in the sprint plan and delaying UX improvements.",
-    solution:"Confirm scope with Sherry, verify acceptance criteria are complete, and add to the appropriate sprint today.",
-    action_plan:"1. Ping Sherry to confirm she's ready to pick this up.\n2. Review acceptance criteria on CSA-85711 — confirm they're PM-approved.\n3. Add to current sprint in Jira.\n4. Confirm sprint goal alignment in next standup.",
-    tags:["copilot-analytics","UX","ready-for-dev","sherry","CSA-85711"]
-  },
-  {
-    id:7,
-    title:"Triage CSA-85733: AutoSummary showing 'Ignored' incorrectly (P2)",
-    priority:"high",
-    source:"jira",
-    category:"engineering",
-    estimated_effort:"30min",
-    updated:"2026-06-29T11:30:40+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-85733",
-    context:"CSA-85733 is a P2 bug where AutoSummary displays 'Ignored' for summaries that don't contain actual summary text. Affects New Analytics and Integrations. Open for 3 days in 'New' status — possibly same root cause as CSA-59030 (similarity score -1 bug).",
-    problem:"A P2 data accuracy bug in New Analytics has been sitting unassigned for 3 days. If this shares root cause with CSA-59030, a single fix may resolve both — but neither has been investigated yet.",
-    solution:"Assign to New Analytics engineering, investigate root cause connection with CSA-59030, and target a fix within this sprint.",
-    action_plan:"1. Confirm reproduction steps with the reporter.\n2. Check if CSA-85733 and CSA-59030 share the same root cause (similarity score logic).\n3. Assign to New Analytics engineering lead for investigation.\n4. Target a fix or workaround within the current sprint — update both tickets.",
-    tags:["autosummary","new-analytics","P2-bug","CSA-85733","CSA-59030"]
-  },
-  {
-    id:8,
-    title:"Review Ammon's updated product requirements page in Confluence",
-    priority:"medium",
-    source:"confluence",
-    category:"review",
-    estimated_effort:"30min",
-    updated:"2026-07-01T00:00:00+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/wiki/",
-    context:"Ammon Lewis updated a product requirements Confluence page yesterday. Ammon is a key OD stakeholder and his requirements pages typically contain specs that directly impact sprint scope and engineering acceptance criteria.",
-    problem:"Unreviewed requirements changes from Ammon can lead to misaligned implementation — catching them early prevents late-stage rework.",
-    solution:"Review the updated page using page history to identify what changed, add inline comments on anything needing clarification, and update related Jira tickets if scope changed.",
-    action_plan:"1. Open the Confluence page from the CQL search results (contributor = Ammon, lastmodified yesterday).\n2. Use 'Compare versions' to see exactly what changed.\n3. Add inline comments on sections needing clarification.\n4. Update related Jira tickets if scope has changed.",
-    tags:["ammon","requirements","confluence","review","specs"]
-  },
-  {
-    id:9,
-    title:"Review CSA-83447: Lyra Design Adoption (updated 12 PM today)",
-    priority:"medium",
-    source:"jira",
-    category:"review",
-    estimated_effort:"15min",
-    updated:"2026-07-02T12:33:17+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-83447",
-    context:"CSA-83447 ([CrossCX] Lyra Design Adoption: Observability Dashboard) is a Candidate capability updated at 12:33 PM IST today — very recently. It's part of the CrossCX initiative to migrate OD to the Lyra design system.",
-    problem:"A midday update on a design capability could be a comment requiring PM input, a status change, or a scope clarification — leaving it unreviewed today risks blocking the design team.",
-    solution:"Check what changed in the last update and respond with PM input if requested.",
-    action_plan:"1. Open CSA-83447 and check the latest comment or field change.\n2. Determine if design review or PM approval is needed.\n3. Reply with input if requested by the design team.\n4. Update ticket status to 'Under Review' or 'Approved' as appropriate.",
-    tags:["lyra","design","crosscx","CSA-83447","candidate"]
-  },
-  {
-    id:10,
-    title:"Triage CSA-63844: Noisy Rules Detection epic (updated today)",
-    priority:"medium",
-    source:"jira",
-    category:"product",
-    estimated_effort:"30min",
-    updated:"2026-07-02T10:23:38+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-63844",
-    context:"CSA-63844 (Noisy & Problematic Rules Detection) is a reported epic updated this morning at 10:23 AM IST with no assignee. It's related to the OD Rules Engine capability (CSA-31479, currently In Progress). The 3 placeholder epics nearby (CSA-63837/39/42) suggest a planning session may have touched this.",
-    problem:"The epic has no assignee and unclear status — it may need PM scoping to link to CSA-31479 or to be marked as a separate roadmap item.",
-    solution:"Review what changed, link to CSA-31479 if appropriate, assign ownership, and add to backlog grooming if not sprint-ready.",
-    action_plan:"1. Open CSA-63844 and review today's changes and any attached context.\n2. Determine if this is a child of CSA-31479 or a standalone epic.\n3. Assign to the appropriate product or engineering owner.\n4. Add to next backlog grooming session for prioritization.",
-    tags:["rules-engine","rules-detection","CSA-63844","backlog","CSA-31479"]
-  },
-  {
-    id:11,
-    title:"Review Customer Data Deletion alignment corrections email",
-    priority:"medium",
-    source:"email",
-    category:"process",
-    estimated_effort:"30min",
-    updated:"2026-07-01T00:00:00+0530",
-    source_url:"",
-    context:"An email about Customer Data Deletion alignment corrections arrived recently. The OD has three active epics in this area: CSA-42413, CSA-42414, CSA-42415, all assigned to Manthan Madannawar. Alignment corrections on a compliance-critical feature need rapid PM review.",
-    problem:"If the corrections change the spec or scope, Manthan and the team may be building to the wrong requirements — catching this now prevents costly rework.",
-    solution:"Read the email, identify what changed vs. the current spec, update the relevant Jira epics, and notify Manthan of any scope changes.",
-    action_plan:"1. Read the Customer Data Deletion alignment email in full.\n2. Compare corrections against current epic descriptions (CSA-42413/14/15).\n3. Update the epic descriptions in Jira to reflect the corrections.\n4. Ping Manthan Madannawar with a summary of what changed.",
-    tags:["data-deletion","compliance","alignment","manthan","CSA-42414"]
-  },
-  {
-    id:12,
-    title:"Review NPI process email and complete any gate actions",
-    priority:"medium",
-    source:"email",
-    category:"process",
-    estimated_effort:"15min",
-    updated:"2026-07-01T00:00:00+0530",
-    source_url:"",
-    context:"An NPI (New Product Introduction) process email arrived recently. NPI gate emails typically require PM sign-off, milestone acknowledgment, or readiness checklist completion. Missing NPI gates can delay release qualification.",
-    problem:"NPI gate actions have hard deadlines — an unread or unacted email could mean a missed gate review that blocks the release.",
-    solution:"Read the email, identify if any PM action or sign-off is required, complete it before the deadline, and calendar any upcoming NPI milestones.",
-    action_plan:"1. Open and read the NPI process email.\n2. Identify any required PM actions or sign-off items.\n3. Complete required gate actions or delegate to the right person with a deadline.\n4. Add any upcoming NPI milestone dates to your calendar.",
-    tags:["NPI","launch-process","gate-review","compliance","release"]
-  },
-  {
-    id:13,
-    title:"Assign CSA-81265: Hardcoded endpoint filters in AI Agents Eval (P3)",
-    priority:"medium",
-    source:"jira",
-    category:"engineering",
-    estimated_effort:"15min",
-    updated:"2026-07-01T16:00:57+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/browse/CSA-81265",
-    context:"CSA-81265 is a P3 bug where endpoint filters are hardcoded in the AI Agents Evaluation tab (New Analytics + OD components). Updated yesterday. Hardcoded values reduce the feature's usefulness across different customer environments.",
-    problem:"A hardcoded configuration issue limits the evaluation feature's flexibility. While P3, leaving it unassigned means it will keep aging without progress.",
-    solution:"Assign to a New Analytics engineer for current or next sprint as a quick configuration fix.",
-    action_plan:"1. Confirm with engineering whether this is a config-driven fix or a code change.\n2. Assign to a New Analytics engineer.\n3. Target for current or next sprint based on capacity.\n4. Verify fix in staging before releasing to production.",
-    tags:["ai-evaluations","P3-bug","endpoint-filters","CSA-81265","new-analytics"]
-  },
-  {
-    id:14,
-    title:"Close RTI V5 action item — Matan confirmed it's sending",
-    priority:"low",
-    source:"teams",
-    category:"product",
-    estimated_effort:"15min",
-    updated:"2026-07-02T10:20:00+0530",
-    source_url:"https://nice-ce-cxone-prod.atlassian.net/wiki/spaces/csa/pages/3541566011/RTI+Derived+Data+-+Direct+Query+V5+Published",
-    context:"Matan Mizrahi confirmed this morning at 10:20 IST: 'yes we are sending' RTI V5 primary and secondary sources to OD. He shared the spec doc: RTI Derived Data - Direct Query V5 Published on Confluence. This resolves the open RTI V5 question from the release planning discussion.",
-    problem:"The RTI V5 question was an open risk item in release planning. It is now resolved but the related Jira tickets and planning docs may still show it as an open risk.",
-    solution:"Update related Jira tickets to remove the RTI V5 open risk, share Matan's spec doc with OD engineering, and close the action item in the release plan.",
-    action_plan:"1. Open Matan's RTI V5 Confluence page and bookmark it.\n2. Share the doc link with OD engineering lead.\n3. Update any Jira tickets that listed 'RTI V5 confirmation pending' as a risk.\n4. Remove or close the RTI V5 item from the release risk register.",
-    tags:["RTI-V5","matan","data-integration","resolved","release-risk"]
-  },
-  {
-    id:15,
-    title:"Note MAX SSO deploying tomorrow (Uttam) — watch for OD impact",
-    priority:"low",
-    source:"teams",
-    category:"stakeholder",
-    estimated_effort:"5min",
-    updated:"2026-07-02T00:00:00+0530",
-    source_url:"",
-    context:"Uttam Chakraborty confirmed SSO for MAX is deploying tomorrow (July 3). This is informational — no immediate action from Avinash unless the OD product has an authentication dependency on MAX.",
-    problem:"No direct action required, but if OD has any MAX authentication integration, an unmonitored SSO deployment could cause a brief disruption.",
-    solution:"Flag to OD engineering team to monitor tomorrow's MAX SSO deployment for any side effects on OD integrations.",
-    action_plan:"1. Note MAX SSO deployment date: July 3.\n2. Check if any OD integrations authenticate through MAX.\n3. If yes — alert OD engineering lead to monitor during deployment window.\n4. No further action needed unless an issue is reported.",
-    tags:["SSO","MAX","deployment","uttam","informational"]
-  }
-];
-
-// ── State ──────────────────────────────────────────────────────────────────────
-let activeFilter = "all";
-let searchQuery  = "";
-
-// ── Render ─────────────────────────────────────────────────────────────────────
-function render() {
-  const main = document.getElementById("main");
-  let todos = TODOS.slice();
-
-  if (activeFilter === "critical") todos = todos.filter(t => t.priority === "critical");
-  else if (activeFilter !== "all") todos = todos.filter(t => t.source === activeFilter);
-
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    todos = todos.filter(t =>
-      t.title.toLowerCase().includes(q) ||
-      t.context.toLowerCase().includes(q) ||
-      t.tags.some(x => x.toLowerCase().includes(q))
-    );
-  }
-
-  if (todos.length === 0) {
-    main.innerHTML = '<div class="empty">✅ No items match your filters</div>';
-    return;
-  }
-
-  const groups = { critical: [], high: [], medium: [], low: [] };
-  todos.forEach(t => (groups[t.priority] || groups.low).push(t));
-
-  const labels = {
-    critical: "Critical — Needs action today",
-    high: "High Priority — This week",
-    medium: "Medium — This sprint",
-    low: "Low / FYI"
-  };
-
-  let html = "";
-  ["critical","high","medium","low"].forEach(p => {
-    if (!groups[p].length) return;
-    html += `<div class="section-header s-${p}">${labels[p]}&nbsp;(${groups[p].length})</div>`;
-    groups[p].forEach(t => { html += buildCard(t); });
+const TODOS=[];
+let activeFilter="all",searchQuery="";
+function render(){
+  const main=document.getElementById("main");
+  let todos=TODOS.slice();
+  if(activeFilter==="critical")todos=todos.filter(t=>t.priority==="critical");
+  else if(activeFilter!=="all")todos=todos.filter(t=>t.source===activeFilter);
+  if(searchQuery){const q=searchQuery.toLowerCase();todos=todos.filter(t=>t.title.toLowerCase().includes(q)||t.context.toLowerCase().includes(q)||(t.tags||[]).some(x=>x.toLowerCase().includes(q)));}
+  if(!todos.length){main.innerHTML='<div class="empty">✅ No items match your filters</div>';return;}
+  const groups={critical:[],high:[],medium:[],low:[]};
+  todos.forEach(t=>(groups[t.priority]||groups.low).push(t));
+  const labels={critical:"Critical — Needs action today",high:"High Priority — This week",medium:"Medium — This sprint",low:"Low / FYI"};
+  let html="";
+  ["critical","high","medium","low"].forEach(p=>{
+    if(!groups[p].length)return;
+    html+=`<div class="section-header s-${p}">${labels[p]}&nbsp;(${groups[p].length})</div>`;
+    groups[p].forEach(t=>{html+=buildCard(t);});
   });
-  main.innerHTML = html;
+  main.innerHTML=html;
 }
-
-function buildCard(t) {
-  const srcLabel = {jira:"Jira",teams:"Teams",email:"Email",confluence:"Conf"}[t.source] || t.source;
-  const link = t.source_url
-    ? `<a class="open-btn" href="${t.source_url}" target="_blank">↗ Open in ${srcLabel}</a>`
-    : "";
-  const steps = t.action_plan.split("\n").filter(Boolean).map(s => s.replace(/^\d+\.\s*/,"").trim()).slice(0,4);
-  const stepsHtml = steps.map((s,i) => `<li><span class="snum">${i+1}</span><span>${s}</span></li>`).join("");
-  const tagsHtml  = t.tags.map(tg => `<span class="tag">${tg}</span>`).join("");
-  const timeStr   = t.updated ? relTime(t.updated) : "";
-
+function buildCard(t){
+  const sl={jira:"Jira",teams:"Teams",email:"Email",confluence:"Conf"};
+  const srcLabel=sl[t.source]||t.source;
+  const link=t.source_url?`<a class="open-btn" href="${t.source_url}" target="_blank">↗ Open in ${srcLabel}</a>`:"";
+  const steps=(t.action_plan||"").split("\n").filter(Boolean).map(s=>s.replace(/^\d+\.\s*/,"").trim()).slice(0,4);
+  const stepsHtml=steps.map((s,i)=>`<li><span class="snum">${i+1}</span><span>${s}</span></li>`).join("");
+  const tagsHtml=(t.tags||[]).map(tg=>`<span class="tag">${tg}</span>`).join("");
+  const timeStr=t.updated?relTime(t.updated):"";
   return `<div class="card" data-id="${t.id}" onclick="toggle(${t.id},event)">
-    <div class="card-top">
-      <div class="card-main">
-        <div class="badges">
-          <span class="badge b-${t.source}">${srcLabel}</span>
-          <span class="badge b-${t.priority}">${t.priority}</span>
-          <span class="badge b-effort">${t.estimated_effort}</span>
-        </div>
-        <div class="card-title">${t.title}</div>
-        <div class="card-preview">${t.context}</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-time">${timeStr}</span>
-        <span class="chevron">▾</span>
-      </div>
+    <div class="card-top"><div class="card-main">
+      <div class="badges"><span class="badge b-${t.source}">${srcLabel}</span><span class="badge b-${t.priority}">${t.priority}</span><span class="badge b-effort">${t.estimated_effort||""}</span></div>
+      <div class="card-title">${t.title}</div>
+      <div class="card-preview">${t.context||""}</div>
     </div>
-    <div class="drill">
-      <div class="drill-grid">
-        <div class="drill-box"><div class="drill-lbl lbl-ctx">📋 Context</div><div class="drill-text">${t.context}</div></div>
-        <div class="drill-box"><div class="drill-lbl lbl-prob">⚠️ Problem</div><div class="drill-text">${t.problem}</div></div>
-        <div class="drill-box"><div class="drill-lbl lbl-sol">💡 Solution</div><div class="drill-text">${t.solution}</div></div>
-        <div class="drill-box"><div class="drill-lbl lbl-act">🎯 Action Plan</div><ul class="steps">${stepsHtml}</ul></div>
-      </div>
-      <div class="drill-footer">
-        <div class="tags">${tagsHtml}</div>
-        ${link}
-      </div>
-    </div>
+    <div class="card-meta"><span class="card-time">${timeStr}</span><span class="chevron">▾</span></div></div>
+    <div class="drill"><div class="drill-grid">
+      <div class="drill-box"><div class="drill-lbl lbl-ctx">📋 Context</div><div class="drill-text">${t.context||"—"}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-prob">⚠️ Problem</div><div class="drill-text">${t.problem||"—"}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-sol">💡 Solution</div><div class="drill-text">${t.solution||"—"}</div></div>
+      <div class="drill-box"><div class="drill-lbl lbl-act">🎯 Action Plan</div><ul class="steps">${stepsHtml}</ul></div>
+    </div><div class="drill-footer"><div class="tags">${tagsHtml}</div>${link}</div></div>
   </div>`;
 }
-
-function toggle(id, e) {
-  if (e.target.tagName === "A") return;
-  const card = document.querySelector(`.card[data-id="${id}"]`);
-  if (!card) return;
-  const wasOpen = card.classList.contains("open");
-  document.querySelectorAll(".card.open").forEach(c => c.classList.remove("open"));
-  if (!wasOpen) card.classList.add("open");
-}
-
-function relTime(s) {
-  const d = new Date(s);
-  if (isNaN(d)) return "";
-  const diff = (Date.now() - d) / 1000;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-  return `${Math.floor(diff/86400)}d ago`;
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────────
-document.getElementById("toolbar").addEventListener("click", e => {
-  const btn = e.target.closest(".filter-btn");
-  if (!btn) return;
-  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  activeFilter = btn.dataset.f;
-  render();
-});
-
-document.getElementById("search").addEventListener("input", e => {
-  searchQuery = e.target.value;
-  render();
-});
-
-// Update header stats
-const crit = TODOS.filter(t => t.priority === "critical").length;
-const high = TODOS.filter(t => t.priority === "high").length;
-document.getElementById("cCritical").textContent = `${crit} critical`;
-document.getElementById("cHigh").textContent      = `${high} high`;
-document.getElementById("cTotal").textContent     = `${TODOS.length} total`;
-
+function toggle(id,e){if(e.target.tagName==="A")return;const c=document.querySelector(`.card[data-id="${id}"]`);if(!c)return;const w=c.classList.contains("open");document.querySelectorAll(".card.open").forEach(x=>x.classList.remove("open"));if(!w)c.classList.add("open");}
+function relTime(s){const d=new Date(s);if(isNaN(d))return"";const diff=(Date.now()-d)/1000;if(diff<60)return"just now";if(diff<3600)return`${Math.floor(diff/60)}m ago`;if(diff<86400)return`${Math.floor(diff/3600)}h ago`;return`${Math.floor(diff/86400)}d ago`;}
+document.getElementById("toolbar").addEventListener("click",e=>{const btn=e.target.closest(".filter-btn");if(!btn)return;document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");activeFilter=btn.dataset.f;render();});
+document.getElementById("search").addEventListener("input",e=>{searchQuery=e.target.value;render();});
 render();
 </script>
 </body>
